@@ -308,6 +308,7 @@ export default {
   color: var(--text-primary);
   margin-bottom: 1.5rem;
   letter-spacing: -0.02em;
+  transition: font-size 0.3s ease;
 }
 
 .title-line {
@@ -322,12 +323,14 @@ export default {
   margin-top: 0.8rem;
   display: block;
   line-height: 1.2;
+  transition: font-size 0.3s ease;
 }
 
 .hero-description {
   margin-bottom: 1.5rem;
   text-align: center;
   max-width: 100%;
+  transition: all 0.3s ease;
 }
 
 .main-description-text {
@@ -338,6 +341,7 @@ export default {
   text-transform: uppercase;
   letter-spacing: 0.03em;
   margin-bottom: 0;
+  transition: font-size 0.3s ease;
 }
 
 .final-question {
@@ -346,6 +350,7 @@ export default {
   color: var(--text-primary);
   margin-top: 1rem;
   font-style: italic;
+  transition: font-size 0.3s ease;
 }
 
 .hero-cta {
@@ -411,6 +416,7 @@ export default {
   justify-content: center;
   align-items: flex-end;
   z-index: 3;
+  transition: all 0.3s ease;
 }
 
 .image-wrapper {
@@ -419,6 +425,7 @@ export default {
   max-width: 600px;
   display: flex;
   justify-content: center;
+  transition: max-width 0.3s ease;
 }
 
 .main-image {
@@ -439,10 +446,198 @@ export default {
 }
 
 /* Responsive Design */
-/* Desktop */
-@media (max-width: 1200px) {
+/* Très grand écran (>1920px) */
+@media (min-width: 1921px) {
   .hero-container {
+    max-width: 1800px;
+    gap: 80px;
+  }
+  
+  .hero-title {
+    font-size: clamp(3.5rem, 4.5vw, 5rem);
+  }
+  
+  .script-intro {
+    font-size: clamp(3.5rem, 4vw, 4.5rem);
+  }
+  
+  .main-description-text {
+    font-size: clamp(1rem, 1.2vw, 1.3rem);
+  }
+  
+  .final-question {
+    font-size: clamp(1.2rem, 1.4vw, 1.5rem);
+  }
+  
+  .cta-button {
+    padding: clamp(1.2rem, 1.5vw, 1.5rem) clamp(2.5rem, 3vw, 3rem);
+    font-size: clamp(0.9rem, 1vw, 1.1rem);
+  }
+  
+  .image-wrapper {
+    max-width: 700px;
+  }
+}
+
+/* Desktop large (1441px - 1920px) */
+@media (min-width: 1441px) and (max-width: 1920px) {
+  .hero-container {
+    max-width: 1600px;
+    gap: 60px;
+  }
+  
+  .hero-title {
+    font-size: clamp(2.5rem, 3.2vw, 3.2rem);
+  }
+  
+  .script-intro {
+    font-size: clamp(2.5rem, 3vw, 3.2rem);
+  }
+  
+  .main-description-text {
+    font-size: clamp(0.9rem, 1vw, 1.1rem);
+  }
+  
+  .final-question {
+    font-size: clamp(1rem, 1.1vw, 1.2rem);
+  }
+  
+  .cta-button {
+    padding: clamp(1rem, 1.1vw, 1.2rem) clamp(2rem, 2.3vw, 2.5rem);
+    font-size: clamp(0.8rem, 0.9vw, 0.95rem);
+  }
+  
+  .image-wrapper {
+    max-width: 650px;
+  }
+}
+
+/* Desktop standard (1201px - 1440px) */
+@media (min-width: 1201px) and (max-width: 1440px) {
+  .hero-container {
+    max-width: 1400px;
+    gap: 50px;
+  }
+  
+  .hero-title {
+    font-size: clamp(2.2rem, 3.2vw, 2.8rem);
+  }
+  
+  .script-intro {
+    font-size: clamp(2.2rem, 2.8vw, 2.8rem);
+  }
+  
+  .main-description-text {
+    font-size: clamp(0.85rem, 0.95vw, 1rem);
+  }
+  
+  .final-question {
+    font-size: clamp(0.95rem, 1.1vw, 1.15rem);
+  }
+  
+  .cta-button {
+    padding: clamp(0.95rem, 1.1vw, 1.15rem) clamp(1.8rem, 2.2vw, 2.3rem);
+    font-size: clamp(0.75rem, 0.85vw, 0.9rem);
+  }
+  
+  .image-wrapper {
+    max-width: 600px;
+  }
+}
+
+/* Laptop large (1025px - 1200px) */
+@media (min-width: 1025px) and (max-width: 1200px) {
+  .hero-container {
+    max-width: 1200px;
+    gap: 40px;
+    padding: 1.2rem;
+  }
+  
+  .hero-content {
+    max-width: 550px;
+  }
+  
+  .hero-title {
+    font-size: clamp(2.2rem, 3.5vw, 3rem);
+    margin-bottom: 1.2rem;
+  }
+  
+  .script-intro {
+    font-size: clamp(2.2rem, 3vw, 3rem);
+    margin-top: 0.6rem;
+  }
+  
+  .main-description-text {
+    font-size: clamp(0.85rem, 0.95vw, 1rem);
+    line-height: 1.5;
+  }
+  
+  .final-question {
+    font-size: clamp(0.95rem, 1.1vw, 1.2rem);
+  }
+  
+  .cta-button {
+    padding: clamp(0.9rem, 1.1vw, 1.2rem) clamp(1.8rem, 2.2vw, 2.3rem);
+    font-size: clamp(0.75rem, 0.85vw, 0.9rem);
+  }
+  
+  .image-wrapper {
+    max-width: 500px;
+  }
+  
+  .main-image {
+    max-height: 650px;
+  }
+}
+
+/* Laptop standard (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero-container {
+    max-width: 1000px;
     gap: 30px;
+    padding: 1rem;
+  }
+  
+  .hero-content {
+    max-width: 480px;
+  }
+  
+  .hero-badge {
+    font-size: clamp(0.6rem, 0.8vw, 0.7rem);
+    padding: 0.4rem 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  
+  .hero-title {
+    font-size: clamp(2rem, 3.2vw, 2.8rem);
+    margin-bottom: 1rem;
+  }
+  
+  .script-intro {
+    font-size: clamp(2rem, 2.8vw, 2.8rem);
+    margin-top: 0.5rem;
+  }
+  
+  .main-description-text {
+    font-size: clamp(0.8rem, 0.9vw, 0.95rem);
+    line-height: 1.4;
+  }
+  
+  .final-question {
+    font-size: clamp(0.9rem, 1vw, 1.1rem);
+  }
+  
+  .cta-button {
+    padding: clamp(0.8rem, 1vw, 1.1rem) clamp(1.6rem, 2vw, 2.1rem);
+    font-size: clamp(0.7rem, 0.8vw, 0.85rem);
+  }
+  
+  .image-wrapper {
+    max-width: 420px;
+  }
+  
+  .main-image {
+    max-height: 550px;
   }
 }
 
@@ -632,6 +827,83 @@ export default {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Écrans ultra-wide (>2560px) */
+@media (min-width: 2561px) {
+  .hero-container {
+    max-width: 2200px;
+    gap: 100px;
+  }
+  
+  .hero-title {
+    font-size: clamp(3.2rem, 3.8vw, 4.5rem);
+  }
+  
+  .script-intro {
+    font-size: clamp(3.2rem, 3.5vw, 4.2rem);
+  }
+  
+  .main-description-text {
+    font-size: clamp(1rem, 1.1vw, 1.3rem);
+  }
+  
+  .final-question {
+    font-size: clamp(1.1rem, 1.2vw, 1.4rem);
+  }
+  
+  .cta-button {
+    padding: clamp(1.2rem, 1.3vw, 1.5rem) clamp(2.5rem, 2.8vw, 3rem);
+    font-size: clamp(0.9rem, 1vw, 1.1rem);
+  }
+  
+  .image-wrapper {
+    max-width: 800px;
+  }
+  
+  .main-image {
+    max-height: 1000px;
+  }
+}
+
+/* Optimisation pour les ratios d'écran spécifiques */
+@media (min-aspect-ratio: 16/9) and (min-width: 1200px) {
+  .hero-container {
+    align-items: center;
+    min-height: 80vh;
+  }
+  
+  .hero-content {
+    padding: 2rem 0;
+  }
+}
+
+@media (min-aspect-ratio: 21/9) and (min-width: 1440px) {
+  .hero-container {
+    gap: 80px;
+    padding: 2rem 3rem;
+  }
+  
+  .hero-content {
+    max-width: 700px;
+  }
+  
+  .image-wrapper {
+    max-width: 700px;
+  }
+}
+
+/* Ajustements pour les écrans haute résolution */
+@media (min-resolution: 192dpi) and (min-width: 1200px) {
+  .hero-title {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  
+  .main-description-text {
+    font-weight: 500;
+    letter-spacing: 0.02em;
   }
 }
 </style>

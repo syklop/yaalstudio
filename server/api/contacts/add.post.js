@@ -1,6 +1,4 @@
-import { google } from 'googleapis'
-import fs from 'fs'
-import path from 'path'
+import { appendToSheet } from '~/server/utils/googleSheets'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -37,17 +35,7 @@ export default defineEventHandler(async (event) => {
         statusCode: 400,
         statusMessage: 'Format de téléphone invalide'
       })
-}
-
-    // Configuration Google Sheets avec Service Account
-    const config = useRuntimeConfig()
-    const serviceAccountPath = config.googleServiceAccountPath
-    const spreadsheetId = config.googleSheetsId
-    
-    console.log('⚙️ Configuration Google Sheets:', {
-      hasServiceAccountPath: !!serviceAccountPath,
-      hasSpreadsheetId: !!spreadsheetId
-    })
+    }
 
     // Préparer les données pour Google Sheets
     const timestamp = new Date().toLocaleString('fr-FR', {
@@ -69,60 +57,21 @@ export default defineEventHandler(async (event) => {
       'Non traité'
     ]
 
-    // Envoyer vers Google Sheets avec Service Account
+    // Envoyer vers Google Sheets avec les variables d'environnement
     let sheetsSuccess = false
     let sheetsError = null
 
-    if (serviceAccountPath && spreadsheetId) {
-      try {
-        console.log('📊 Tentative d\'ajout dans Google Sheets')
-        
-        // Vérifier le fichier service account
-        const fullPath = path.resolve(serviceAccountPath)
-        
-        if (fs.existsSync(fullPath)) {
-          // Charger le service account
-          const serviceAccount = JSON.parse(fs.readFileSync(fullPath, 'utf8'))
-          console.log('✅ Service account chargé:', serviceAccount.client_email)
-          
-          // Authentification Google
-          const auth = new google.auth.GoogleAuth({
-            credentials: serviceAccount,
-            scopes: ['https://www.googleapis.com/auth/spreadsheets']
-          })
-          
-          const sheets = google.sheets({ version: 'v4', auth })
-          
-          // Requête vers Google Sheets
-          const request = {
-            spreadsheetId,
-            range: 'Contacts!A:F',
-            valueInputOption: 'USER_ENTERED',
-            insertDataOption: 'INSERT_ROWS',
-            resource: {
-              values: [contactData]
-            }
-          }
-          
-          console.log('📤 Envoi vers Google Sheets...')
-          const response = await sheets.spreadsheets.values.append(request)
-          console.log('✅ Succès Google Sheets:', response.data.updates)
-          
-          sheetsSuccess = true
-          
-        } else {
-          console.error('❌ Fichier service account introuvable:', fullPath)
-          sheetsError = 'Fichier service account introuvable'
-        }
-        
-      } catch (googleError) {
-        console.error('❌ Erreur Google Sheets:', googleError.message)
-        sheetsError = googleError.message
-        sheetsSuccess = false
-      }
-    } else {
-      console.log('⚠️ Configuration Google Sheets incomplète, passage en mode fallback')
-      sheetsError = 'Configuration Google Sheets incomplète'
+    try {
+      console.log('📊 Tentative d\'ajout dans Google Sheets avec variables d\'environnement')
+      
+      await appendToSheet(contactData)
+      sheetsSuccess = true
+      console.log('✅ Contact ajouté avec succès dans Google Sheets')
+      
+    } catch (googleError) {
+      console.error('❌ Erreur Google Sheets:', googleError.message)
+      sheetsError = googleError.message
+      sheetsSuccess = false
     }
 
     // Envoyer email de confirmation

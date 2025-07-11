@@ -1,30 +1,38 @@
 import { google } from 'googleapis'
-import fs from 'fs'
-import path from 'path'
 
 export async function getGoogleSheetsClient() {
   const config = useRuntimeConfig()
-  const serviceAccountPath = config.googleServiceAccountPath
   
-  console.log('🔍 Tentative de chargement du service account:', serviceAccountPath)
+  console.log('🔍 Initialisation du client Google Sheets avec les variables d\'environnement...')
   
-  if (!serviceAccountPath) {
-    throw new Error('GOOGLE_SERVICE_ACCOUNT_PATH non défini dans la configuration')
+  // Vérification des variables d'environnement requises
+  if (!config.googleClientEmail) {
+    throw new Error('GOOGLE_CLIENT_EMAIL non défini dans les variables d\'environnement')
   }
   
-  // Résoudre le chemin relatif
-  const fullPath = path.resolve(serviceAccountPath)
-  console.log('📁 Chemin complet du fichier:', fullPath)
-  
-  if (!fs.existsSync(fullPath)) {
-    throw new Error(`Fichier de compte de service Google introuvable: ${fullPath}`)
+  if (!config.googlePrivateKey) {
+    throw new Error('GOOGLE_PRIVATE_KEY non défini dans les variables d\'environnement')
   }
   
-  const serviceAccount = JSON.parse(fs.readFileSync(fullPath, 'utf8'))
-  console.log('✅ Service account chargé:', serviceAccount.client_email)
+  // Reconstitution de l'objet credentials à partir des variables d'environnement
+  const credentials = {
+    type: 'service_account',
+    project_id: config.googleProjectId,
+    private_key_id: config.googlePrivateKeyId,
+    private_key: config.googlePrivateKey.replace(/\\n/g, '\n'),
+    client_email: config.googleClientEmail,
+    client_id: config.googleClientId,
+    auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+    token_uri: 'https://oauth2.googleapis.com/token',
+    auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+    client_x509_cert_url: `https://www.googleapis.com/robot/v1/metadata/x509/${encodeURIComponent(config.googleClientEmail)}`,
+    universe_domain: 'googleapis.com'
+  }
+  
+  console.log('✅ Credentials reconstitués pour:', credentials.client_email)
   
   const auth = new google.auth.GoogleAuth({
-    credentials: serviceAccount,
+    credentials,
     scopes: ['https://www.googleapis.com/auth/spreadsheets']
   })
   
@@ -41,7 +49,7 @@ export async function appendToSheet(data) {
     const spreadsheetId = config.googleSheetsId
     
     if (!spreadsheetId) {
-      throw new Error('GOOGLE_SHEETS_ID non défini')
+      throw new Error('GOOGLE_SHEETS_ID non défini dans les variables d\'environnement')
     }
     
     const request = {
@@ -62,6 +70,7 @@ export async function appendToSheet(data) {
     
   } catch (error) {
     console.error('❌ Erreur Google Sheets:', error.message)
+    console.error('Détails de l\'erreur:', error)
     throw error
   }
 }

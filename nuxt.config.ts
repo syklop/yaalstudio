@@ -88,7 +88,11 @@ export default defineNuxtConfig({
     // Variables privées côté serveur
     googleSheetsId: process.env.GOOGLE_SHEETS_ID,
     googleSheetsApiKey: process.env.GOOGLE_SHEETS_API_KEY,
-    googleServiceAccountPath: process.env.GOOGLE_SERVICE_ACCOUNT_PATH,
+    googleProjectId: process.env.GOOGLE_PROJECT_ID,
+    googleClientEmail: process.env.GOOGLE_CLIENT_EMAIL,
+    googlePrivateKey: process.env.GOOGLE_PRIVATE_KEY,
+    googlePrivateKeyId: process.env.GOOGLE_PRIVATE_KEY_ID,
+    googleClientId: process.env.GOOGLE_CLIENT_ID,
     brevoApiKey: process.env.BREVO_API_KEY,
     fromEmail: process.env.FROM_EMAIL,
     fromName: process.env.FROM_NAME,
