@@ -41,31 +41,39 @@
 
             <div class="gift-highlight">
               <div class="gift-decoration"></div>
-              <h3>"Les 3 erreurs qui empêchent de <span class="script-font">structurer</span> son projet"</h3>
+              <h3>"Les 5 Fondations Invisibles de ton Empire"</h3>
             </div>
 
             <div class="gift-list">
               <div class="gift-item">
                 <span class="gift-number">01</span>
                 <div class="gift-content">
-                  <h4>Guide PDF complet</h4>
-                  <p>Stratégies concrètes et méthodes éprouvées</p>
+                  <h4>Guide PDF</h4>
+                  <p>"Les 5 Fondations Invisibles de ton Empire"</p>
                 </div>
                 <div class="gift-arrow">→</div>
               </div>
               <div class="gift-item">
                 <span class="gift-number">02</span>
                 <div class="gift-content">
-                  <h4>Templates exclusifs</h4>
-                  <p>Outils pratiques pour structurer votre projet</p>
+                  <h4>Template</h4>
+                  <p>Canvas de Planification Stratégique</p>
                 </div>
                 <div class="gift-arrow">→</div>
               </div>
               <div class="gift-item">
                 <span class="gift-number">03</span>
                 <div class="gift-content">
-                  <h4>Accès prioritaire</h4>
-                  <p>Aux futurs contenus et ressources YaalStudio</p>
+                  <h4>Checklist</h4>
+                  <p>Audit Express de votre Projet</p>
+                </div>
+                <div class="gift-arrow">→</div>
+              </div>
+              <div class="gift-item">
+                <span class="gift-number">04</span>
+                <div class="gift-content">
+                  <h4>Bonus</h4>
+                  <p>Accès prioritaire aux futurs contenus</p>
                 </div>
                 <div class="gift-arrow">→</div>
               </div>
