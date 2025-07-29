@@ -813,18 +813,18 @@ export default {
         
         const bom = '\uFEFF' // BOM pour UTF-8
         const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' })
-        const link = document.createElement('a')
-        
-        if (link.download !== undefined) {
-          const url = URL.createObjectURL(blob)
-          link.setAttribute('href', url)
+      const link = document.createElement('a')
+      
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob)
+        link.setAttribute('href', url)
           link.setAttribute('download', `${baseFilename}.csv`)
-          link.style.visibility = 'hidden'
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-          URL.revokeObjectURL(url)
-        }
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+      }
       }
 
       // Notification de succès
