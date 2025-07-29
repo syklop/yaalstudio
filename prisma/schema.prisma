@@ -1,0 +1,149 @@
+// Schema Prisma pour YaalStudio Dashboard
+// Base de données SQLite pour le développement (facilement migratable vers PostgreSQL)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Modèle pour les contacts/inscriptions
+model Contact {
+  id        String   @id @default(cuid())
+  firstName String
+  email     String   @unique
+  phone     String?
+  source    String?  @default("Landing Page") // "Landing Page", "Referral", etc.
+  status    String   @default("Non traité") // "Non traité", "Traité", "Relancé"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Informations supplémentaires pour analytics
+  userAgent String? // Navigateur utilisé
+  ipAddress String? // Adresse IP (anonymisée)
+  country   String? // Pays détecté
+  city      String? // Ville détectée
+  referrer  String? // Site référent
+  
+  // Métadonnées du formulaire
+  countryCode String? // Code pays du téléphone
+  dialCode    String? // Indicatif téléphonique
+  
+  @@map("contacts")
+}
+
+// Modèle pour les visiteurs/analytics
+model Visitor {
+  id          String   @id @default(cuid())
+  sessionId   String   @unique // Identifiant de session unique
+  ipAddress   String? // Adresse IP (anonymisée)
+  userAgent   String?
+  country     String?
+  city        String?
+  referrer    String?
+  landingPage String? // Première page visitée
+  totalViews  Int      @default(1)
+  duration    Int?     // Durée de session en secondes
+  isReturning Boolean  @default(false)
+  hasConverted Boolean @default(false) // A-t-il rempli le formulaire ?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relation avec les vues de pages
+  pageViews PageView[]
+  
+  @@map("visitors")
+}
+
+// Modèle pour tracker les vues de pages
+model PageView {
+  id        String   @id @default(cuid())
+  page      String   // URL de la page
+  title     String?  // Titre de la page
+  duration  Int?     // Temps passé sur la page en secondes
+  createdAt DateTime @default(now())
+  
+  // Relation avec le visiteur
+  visitor   Visitor @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  visitorId String
+  
+  @@map("page_views")
+}
+
+// Modèle pour l'admin (compte unique)
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // Hash bcrypt
+  name      String?
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Informations de session
+  sessions AdminSession[]
+  
+  @@map("admins")
+}
+
+// Modèle pour les sessions admin
+model AdminSession {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  ipAddress String?
+  userAgent String?
+  
+  // Relation avec l'admin
+  admin     Admin  @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  adminId   String
+  
+  @@map("admin_sessions")
+}
+
+// Modèle pour les statistiques quotidiennes (cache pour les performances)
+model DailyStats {
+  id              String   @id @default(cuid())
+  date            DateTime @unique
+  uniqueVisitors  Int      @default(0)
+  totalPageViews  Int      @default(0)
+  newContacts     Int      @default(0)
+  conversionRate  Float?   // Taux de conversion (%)
+  averageDuration Float?   // Durée moyenne de session en secondes
+  topPages        String?  // JSON des pages les plus visitées
+  topReferrers    String?  // JSON des référents les plus fréquents
+  topCountries    String?  // JSON des pays les plus représentés
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("daily_stats")
+}
+
+// Modèle pour les campagnes d'emails
+model EmailCampaign {
+  id            String   @id @default(cuid())
+  subject       String
+  message       String
+  recipientCount Int
+  successCount  Int      @default(0)
+  errorCount    Int      @default(0)
+  sentAt        DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  @@map("email_campaigns")
+}
+
+// Modèle pour les logs d'erreurs
+model ErrorLog {
+  id        String   @id @default(cuid())
+  type      String
+  message   String
+  stack     String?
+  createdAt DateTime @default(now())
+
+  @@map("error_logs")
+} 

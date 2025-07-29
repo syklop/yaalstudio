@@ -1,14 +1,21 @@
-import { appendToSheet } from '~/server/utils/googleSheets'
+import prisma from '~/server/utils/prisma'
 
 export default defineEventHandler(async (event) => {
   try {
-    console.log('🚀 Début traitement contact')
+    console.log('🚀 Début traitement contact avec Prisma')
     
     // Récupérer les données du formulaire
     const body = await readBody(event)
     
     // Validation des données
-    const { firstName, email, phone, source = 'Landing Page' } = body
+    const { 
+      firstName, 
+      email, 
+      phone, 
+      source = 'Landing Page',
+      countryCode,
+      dialCode
+    } = body
     
     console.log('📝 Données reçues:', { firstName, email, phone, source })
     
@@ -37,41 +44,67 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Préparer les données pour Google Sheets
-    const timestamp = new Date().toLocaleString('fr-FR', {
-      timeZone: 'Europe/Paris',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    })
+    // Obtenir les informations de la requête pour analytics
+    const userAgent = getHeader(event, 'user-agent') || ''
+    const ipAddress = getHeader(event, 'x-forwarded-for') || getHeader(event, 'x-real-ip') || 'unknown'
+    const referrer = getHeader(event, 'referer') || ''
 
-    const contactData = [
-      timestamp,
-      firstName.trim(),
-      email.toLowerCase().trim(),
-      phone.trim(),
-      source,
-      'Non traité'
-    ]
-
-    // Envoyer vers Google Sheets avec les variables d'environnement
-    let sheetsSuccess = false
-    let sheetsError = null
+    // Préparer les données pour Prisma
+    let contactSuccess = false
+    let contactError = null
+    let contactData = null
 
     try {
-      console.log('📊 Tentative d\'ajout dans Google Sheets avec variables d\'environnement')
+      console.log('💾 Tentative d\'ajout dans la base de données Prisma')
       
-      await appendToSheet(contactData)
-      sheetsSuccess = true
-      console.log('✅ Contact ajouté avec succès dans Google Sheets')
+      // Vérifier si l'email existe déjà
+      const existingContact = await prisma.contact.findUnique({
+        where: { email: email.toLowerCase().trim() }
+      })
+
+      if (existingContact) {
+        console.log('⚠️ Contact déjà existant, mise à jour...')
+        
+        // Mettre à jour le contact existant
+        contactData = await prisma.contact.update({
+          where: { email: email.toLowerCase().trim() },
+          data: {
+            firstName: firstName.trim(),
+            phone: phone.trim(),
+            source,
+            countryCode,
+            dialCode,
+            userAgent,
+            ipAddress,
+            referrer,
+            updatedAt: new Date()
+          }
+        })
+      } else {
+        // Créer un nouveau contact
+        contactData = await prisma.contact.create({
+          data: {
+            firstName: firstName.trim(),
+            email: email.toLowerCase().trim(),
+            phone: phone.trim(),
+            source,
+            countryCode,
+            dialCode,
+            userAgent,
+            ipAddress,
+            referrer,
+            status: 'Non traité'
+          }
+        })
+      }
       
-    } catch (googleError) {
-      console.error('❌ Erreur Google Sheets:', googleError.message)
-      sheetsError = googleError.message
-      sheetsSuccess = false
+      contactSuccess = true
+      console.log('✅ Contact sauvegardé avec succès en base de données')
+      
+    } catch (dbError) {
+      console.error('❌ Erreur base de données:', dbError.message)
+      contactError = dbError.message
+      contactSuccess = false
     }
 
     // Envoyer email de confirmation
@@ -100,11 +133,19 @@ export default defineEventHandler(async (event) => {
 
     // Log du résultat final
     console.log('🎯 Résultat final:', {
-      sheetsSuccess,
+      contactSuccess,
       emailSent,
-      sheetsError,
+      contactError,
       emailError
     })
+
+    // Vérifier que le contact a été sauvegardé
+    if (!contactSuccess) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'Erreur lors de la sauvegarde du contact'
+      })
+    }
 
     // Réponse de succès
     return {
@@ -113,12 +154,13 @@ export default defineEventHandler(async (event) => {
         ? 'Inscription réussie ! Vous recevrez bientôt votre cadeau par email.'
         : 'Inscription réussie ! Un problème temporaire empêche l\'envoi de l\'email, nous vous contacterons bientôt.',
       data: {
+        id: contactData.id,
         firstName,
         email: email.toLowerCase().trim(),
-        timestamp: new Date().toISOString(),
-        sheetsStatus: sheetsSuccess ? 'success' : 'failed',
+        timestamp: contactData.createdAt.toISOString(),
+        databaseStatus: contactSuccess ? 'success' : 'failed',
         emailStatus: emailSent ? 'sent' : 'failed',
-        ...(sheetsError && { sheetsError }),
+        ...(contactError && { contactError }),
         ...(emailError && { emailError })
       }
     }

@@ -1,3 +1,8 @@
+/* Tailwind CSS directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Import de la police Delight Sunset depuis CDN */
 @font-face {
   font-family: 'Delight Sunset';
@@ -36,6 +41,7 @@
   --color-secondary: #ffffff;
   --color-accent: #333333;
   --color-accent-purple: #666666;
+  --color-gray-50: #fafafa;
   --color-gray-100: #f8f8f8;
   --color-gray-200: #e0e0e0;
   --color-gray-300: #cccccc;
