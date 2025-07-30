@@ -1,0 +1,24 @@
+# Ignorer les fichiers de développement mais garder les essentiels
+.env.local
+.env.*.local
+.DS_Store
+Thumbs.db
+
+# Garder les fichiers Prisma essentiels
+!prisma/
+!node_modules/.prisma/
+!node_modules/@prisma/
+
+# Cache et builds locaux
+.nuxt/
+.output/
+.cache/
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
