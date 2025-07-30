@@ -55,6 +55,9 @@ export default defineNuxtConfig({
     // Exclusion de Prisma des optimisations Rollup
     rollupConfig: {
       external: ['@prisma/client', '.prisma/client']
+    },
+    externals: {
+      external: ['@prisma/client', '.prisma/client']
     }
   },
 
